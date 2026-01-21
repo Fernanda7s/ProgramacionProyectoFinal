@@ -31,7 +31,7 @@ int main() {
     vector <Pelicula> peliculas;
     const string ruta = "peliculas.txt";
 
-    
+
     int opcion;
     menu(opcion);
     do {
