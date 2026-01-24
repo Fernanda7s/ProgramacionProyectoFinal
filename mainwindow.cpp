@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "ventana.h"
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -28,10 +29,13 @@ void MainWindow::on_btnIngresar_clicked()
 
     if(usuario=="usuarioEpn"&&password=="usuarioEpn") {
         //crear la venta para abrir
-
-
+        qDebug() << "Login correcto, intentando abrir ventana...";
+        Ventana *v2 = new Ventana();
+        v2->show();
+        this->hide();
     }else{
-        QMessageBox::warning (this,"Datos Ingresado ","Tiene un arrero vulva a intentarlo");
+        //QMessageBox::warning (this,"Datos Ingresado ","Tiene un arrero vulva a intentarlo");
+        qDebug() << "Login fallido. Usuario ingresado: " << usuario;
     }
 }
 
