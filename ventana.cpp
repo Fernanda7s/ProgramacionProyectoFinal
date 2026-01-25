@@ -6,11 +6,19 @@ Ventana::Ventana(QWidget *parent) :
     ui(new Ui::Ventana)
 {
     ui->setupUi(this);
+
+    QRegularExpression regExp("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]*$");
+    QRegularExpressionValidator *soloLetras = new QRegularExpressionValidator(regExp, this);
+
+    ui->txtProducto->setValidator(soloLetras);
     CargarARchivo();
 }
 
 Ventana::~Ventana()
 {
+
+
+
     delete ui;
 }
 
@@ -59,14 +67,26 @@ void Ventana::CargarARchivo(){
 }
 
 void Ventana::on_brnAgregar_clicked()
-{
-    Tienda nuevo;
-    nuevo.codigo=ui->txtCodigo->text();
-    nuevo.producto=ui->txtProducto->text();
-    nuevo.categoria=ui->cbxCategoria->currentText();
-    nuevo.stock=ui->sbxStock->text().toInt();
-    nuevo.precio=ui->sbxPrecio->text().toDouble();
+{   if(ui->txtCodigo->text().isEmpty() || ui->txtProducto->text().isEmpty()||ui->sbxStock->value()==0||ui->sbxPrecio->value()==0) {
+        QMessageBox::warning(this, "Campos Vacíos", "Por favor, completa las casillas");
+        return;
+    }
 
+
+    Tienda nuevo;
+
+
+    nuevo.codigo=ui->txtCodigo->text().toUpper();
+    nuevo.producto=ui->txtProducto->text().toUpper();
+    nuevo.categoria=ui->cbxCategoria->currentText().toUpper();
+    nuevo.stock=ui->sbxStock->value();
+    nuevo.precio=ui->sbxPrecio->value();
+    for (int i = 0; i < lista.size(); ++i) {
+        if(lista[i].codigo == nuevo.codigo){
+            QMessageBox::warning(this, "Error", "Ya existe el código: " + nuevo.codigo);
+            return;
+        }
+    }
     lista.push_back(nuevo);
     //para que se agrege en la tabla
     int fila = ui->tableRegistro->rowCount();
@@ -80,7 +100,7 @@ void Ventana::on_brnAgregar_clicked()
 
     ui->txtCodigo->clear();
     ui->txtProducto->clear();
-    ui->cbxCategoria->clear();
+
     ui->sbxStock->clear();
     ui->sbxPrecio->clear();
 }
@@ -91,10 +111,15 @@ void Ventana::on_brnAgregar_clicked()
 
 void Ventana::on_btnBuscar_clicked()
 {
+
+    if (ui->txtCodigo->text().isEmpty()) {
+        QMessageBox::warning(this, "Campos Vacíos", "Por favor, completa las casillas");
+        return;
+    }
     QString codigo=ui->txtCodigo->text();
     bool encontrado=false;
     for (int i = 0; i < lista.size(); ++i) {
-        if(lista[i].codigo==codigo){
+        if(QString::compare(lista[i].codigo, codigo, Qt::CaseInsensitive) == 0){
             ui->tableRegistro->selectRow(i);
 
             ui->txtProducto->setText(lista[i].producto);
@@ -113,7 +138,7 @@ void Ventana::on_btnBuscar_clicked()
     }
     ui->txtCodigo->clear();
     ui->txtProducto->clear();
-    ui->cbxCategoria->clear();
+
     ui->sbxStock->clear();
     ui->sbxPrecio->clear();
 }
@@ -121,17 +146,23 @@ void Ventana::on_btnBuscar_clicked()
 
 void Ventana::on_btnActualizar_clicked()
 {
+    if(ui->txtCodigo->text().isEmpty() || ui->txtProducto->text().isEmpty()||ui->sbxStock->value()==0||ui->sbxPrecio->value()==0) {
+        QMessageBox::warning(this, "Campos Vacíos", "Por favor, completa las casillas");
+        return;
+    }
+
     QString codigo=ui->txtCodigo->text();
     bool encontrado=false;
 
     for (int i = 0; i < lista.size(); ++i){
-        if(lista[i].codigo==codigo){
+        if(QString::compare(lista[i].codigo, codigo, Qt::CaseInsensitive) == 0){
 
             lista[i].codigo = ui->txtCodigo->text();
             lista[i].producto = ui->txtProducto->text();
             lista[i].categoria = ui->cbxCategoria->currentText();
             lista[i].stock = ui->sbxStock->value();
             lista[i].precio = ui->sbxPrecio->value();
+            encontrado =true;
 
             // Actualizar tabla
             ui->tableRegistro->item(i, 0)->setText(lista[i].codigo);
@@ -147,7 +178,7 @@ void Ventana::on_btnActualizar_clicked()
     }
     ui->txtCodigo->clear();
     ui->txtProducto->clear();
-    ui->cbxCategoria->clear();
+
     ui->sbxStock->clear();
     ui->sbxPrecio->clear();
 }
@@ -157,11 +188,15 @@ void Ventana::on_btnActualizar_clicked()
 
 void Ventana::on_btnEliminar_clicked()
 {
+    if (ui->txtCodigo->text().isEmpty()) {
+        QMessageBox::warning(this, "Campos Vacíos", "Por favor, completa las casillas");
+        return;
+    }
     QString codigo=ui->txtCodigo->text();
     bool encontrado=false;
 
     for (int i = 0; i < lista.size(); ++i){
-        if(lista[i].codigo==codigo){
+        if(QString::compare(lista[i].codigo, codigo, Qt::CaseInsensitive) == 0){
             lista.erase(lista.begin()+i);
             ui->tableRegistro->removeRow(i);
             encontrado==true;
@@ -173,7 +208,7 @@ void Ventana::on_btnEliminar_clicked()
     }
     ui->txtCodigo->clear();
     ui->txtProducto->clear();
-    ui->cbxCategoria->clear();
+
     ui->sbxStock->clear();
     ui->sbxPrecio->clear();
 }
@@ -195,7 +230,7 @@ void Ventana::on_pushButton_5_clicked()
             <<t.precio<<"\n";
     }
     archivo.close();
-    QMessageBox::information(this,"Error","Datos guardados");
+    QMessageBox::information(this,"MENSAJE","Datos guardados");
     this->close();
 
 }

@@ -8,10 +8,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QRegularExpression regExp("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]*$");
+    QRegularExpressionValidator *soloLetras = new QRegularExpressionValidator(regExp, this);
+
+    ui->txtUsuario->setValidator(soloLetras);
+    ui->txtPassword->setValidator(soloLetras);
 }
 
 MainWindow::~MainWindow()
 {
+
     delete ui;
 }
 
@@ -27,7 +33,7 @@ void MainWindow::on_btnIngresar_clicked()
     }
 
 
-    if(usuario=="usuarioEpn"&&password=="usuarioEpn") {
+    if(usuario=="epn"&&password=="epn") {
         //crear la venta para abrir
         qDebug() << "Login correcto, intentando abrir ventana...";
         Ventana *v2 = new Ventana();

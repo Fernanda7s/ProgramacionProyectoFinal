@@ -1,6 +1,6 @@
 #ifndef VENTANA_H
 #define VENTANA_H
-
+#include <QRegularExpressionValidator>
 #include <QMainWindow>
 #include <vector>
 #include <QFile>
