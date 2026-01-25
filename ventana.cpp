@@ -77,6 +77,105 @@ void Ventana::on_brnAgregar_clicked()
     ui->tableRegistro->setItem(fila, 3, new QTableWidgetItem(QString::number(nuevo.stock)));
     ui->tableRegistro->setItem(fila,4,new QTableWidgetItem(QString::number(nuevo.precio)));
 
+
+    ui->txtCodigo->clear();
+    ui->txtProducto->clear();
+    ui->cbxCategoria->clear();
+    ui->sbxStock->clear();
+    ui->sbxPrecio->clear();
+}
+
+
+
+
+
+void Ventana::on_btnBuscar_clicked()
+{
+    QString codigo=ui->txtCodigo->text();
+    bool encontrado=false;
+    for (int i = 0; i < lista.size(); ++i) {
+        if(lista[i].codigo==codigo){
+            ui->tableRegistro->selectRow(i);
+
+            ui->txtProducto->setText(lista[i].producto);
+            ui->cbxCategoria->setCurrentText(lista[i].categoria);
+            ui->sbxStock->setValue(lista[i].stock);
+            ui->sbxPrecio->setValue(lista[i].precio);
+            encontrado = true;
+            break;
+
+        }
+
+    }
+    if(!encontrado){
+        QMessageBox::warning(this,"Error","No encontrado");
+        //limpiear cajas
+    }
+    ui->txtCodigo->clear();
+    ui->txtProducto->clear();
+    ui->cbxCategoria->clear();
+    ui->sbxStock->clear();
+    ui->sbxPrecio->clear();
+}
+
+
+void Ventana::on_btnActualizar_clicked()
+{
+    QString codigo=ui->txtCodigo->text();
+    bool encontrado=false;
+
+    for (int i = 0; i < lista.size(); ++i){
+        if(lista[i].codigo==codigo){
+
+            lista[i].codigo = ui->txtCodigo->text();
+            lista[i].producto = ui->txtProducto->text();
+            lista[i].categoria = ui->cbxCategoria->currentText();
+            lista[i].stock = ui->sbxStock->value();
+            lista[i].precio = ui->sbxPrecio->value();
+
+            // Actualizar tabla
+            ui->tableRegistro->item(i, 0)->setText(lista[i].codigo);
+            ui->tableRegistro->item(i, 1)->setText(lista[i].producto);
+            ui->tableRegistro->item(i, 2)->setText(lista[i].categoria);
+            ui->tableRegistro->item(i, 3)->setText(QString::number(lista[i].stock));
+            ui->tableRegistro->item(i, 4)->setText(QString::number(lista[i].precio));
+        }
+    }
+    if(!encontrado){
+        QMessageBox::warning(this,"Error","No encontrado");
+        //limpiear cajas
+    }
+    ui->txtCodigo->clear();
+    ui->txtProducto->clear();
+    ui->cbxCategoria->clear();
+    ui->sbxStock->clear();
+    ui->sbxPrecio->clear();
+}
+
+
+
+
+void Ventana::on_btnEliminar_clicked()
+{
+    QString codigo=ui->txtCodigo->text();
+    bool encontrado=false;
+
+    for (int i = 0; i < lista.size(); ++i){
+        if(lista[i].codigo==codigo){
+            lista.erase(lista.begin()+i);
+            ui->tableRegistro->removeRow(i);
+            encontrado==true;
+        }
+    }
+    if(!encontrado){
+        QMessageBox::warning(this,"Error","No encontrado");
+        //limpiear cajas
+    }
+    ui->txtCodigo->clear();
+    ui->txtProducto->clear();
+    ui->cbxCategoria->clear();
+    ui->sbxStock->clear();
+    ui->sbxPrecio->clear();
 }
 
 
@@ -90,13 +189,18 @@ void Ventana::on_pushButton_5_clicked()
     QTextStream out (&archivo);
     for (auto&t: lista) {
         out<<t.codigo<<"|"
-        <<t.producto<<"|"
-        <<t.categoria<<"|"
-        <<t.stock<<"|"
+            <<t.producto<<"|"
+            <<t.categoria<<"|"
+            <<t.stock<<"|"
             <<t.precio<<"\n";
     }
     archivo.close();
     QMessageBox::information(this,"Error","Datos guardados");
+    this->close();
 
 }
+
+
+
+
 

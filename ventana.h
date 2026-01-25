@@ -36,6 +36,12 @@ private slots:
 
     void on_pushButton_5_clicked();
 
+    void on_btnBuscar_clicked();
+
+    void on_btnActualizar_clicked();
+
+    void on_btnEliminar_clicked();
+
 private:
     Ui::Ventana *ui;
     std::vector<Tienda>lista;
